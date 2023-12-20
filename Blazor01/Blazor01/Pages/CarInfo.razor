@@ -1,0 +1,68 @@
+﻿@using System.Net.Http
+@inject HttpClient Http
+@using System.Net.Http.Json
+@using System.Threading.Tasks
+@using tradehub.Domain.Model
+
+
+@page "/carinfo/{carId}"
+
+<h3>Car Information</h3>
+
+    <div>
+        <h4>@car.Name</h4>
+        <p>VIN: @car.VIN</p>
+        <p>Status: @car.Status</p>
+    </div>
+
+<div>
+        <h4>Операции с автомобилем:</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Тип</th>
+                        <th>Сумма</th>
+                        <th>Счет</th>
+                        <th>Примечание</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ddsItem in ddsItems)
+                    {
+                        <tr class="@GetRowClass(ddsItem)">
+                            <td>@ddsItem.Date.ToShortDateString()</td>
+                            <td>@ddsItem.Type</td>
+                            <td>@ddsItem.Amount</td>
+                            <td>@ddsItem.Account</td>
+                            <td>@ddsItem.Note</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+</div>
+
+@code {
+    [Parameter]
+    public string CarId { get; set; }
+
+    private Car car;
+    private List<DDS> ddsItems;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrEmpty(CarId) && Guid.TryParse(CarId, out Guid carGuid))
+        {
+            // Получаем информацию об автомобиле
+            car = await Http.GetFromJsonAsync<Car>($"https://localhost:7225/api/Car/{carGuid}");
+
+            // Получаем записи DDS для этого автомобиля
+            ddsItems = await Http.GetFromJsonAsync<List<DDS>>($"https://localhost:7225/api/DDS/Car/{carGuid}");
+        }
+    }
+
+    private string GetRowClass(DDS ddsItem)
+    {
+        return ddsItem.IsProfit ? "table-success" : "table-danger";
+    }
+}

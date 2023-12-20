@@ -1,0 +1,122 @@
+﻿@using System.Net.Http
+@inject HttpClient Http
+@using System.Net.Http.Json
+@using System.Threading.Tasks
+@using tradehub.Domain.Model
+@using static tradehub.Domain.Model.SaleCar
+@page "/salecar"
+
+<div class="container mt-4">
+    <h3>Продажа автомобиля</h3>
+
+    <div class="mb-3">
+        <label for="CarId" class="form-label">Выбор автомобиля:</label>
+        <select id="CarId" @onchange="CarSelectionChanged" class="form-select">
+            @foreach (var car in cars.Where(c => c.Status == "Sale"))
+            {
+                <option value="@car.Id">@car.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="EmployeeId" class="form-label">Выбор сотрудника:</label>
+        <select id="EmployeeId" @onchange="EmployeeSelectionChanged" class="form-select">
+            @foreach (var employee in employees)
+            {
+                <option value="@employee.Id">@employee.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="Account" class="form-label">Наименование счета:</label>
+        <input id="Account" @bind="newDDS.Account" class="form-control" placeholder="Наименование счета" />
+    </div>
+
+    <div class="mb-3">
+        <label for="Amount" class="form-label">Сумма продажи:</label>
+        <input id="Amount" @bind="newDDS.Amount" class="form-control" placeholder="Сумма продажи" />
+    </div>
+
+    <button @onclick="AddSale" class="btn btn-primary">Добавить новую продажу</button>
+</div>
+@code {
+    private Car car = new Car();
+    private DDS newDDS = new DDS();
+    private SaleCar newSaleCar = new SaleCar();
+    string message = "";
+    private Guid selectedEmployeeId;
+    private List<Employee> employees = new List<Employee>();
+    private List<Car> cars = new List<Car>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Выполните HTTP GET запрос для получения списка сотрудников
+        employees = await Http.GetFromJsonAsync<List<Employee>>("https://localhost:7225/api/Employee");
+        cars = await Http.GetFromJsonAsync<List<Car>>("https://localhost:7225/api/Car");
+    }
+
+    private async Task EmployeeSelectionChanged(ChangeEventArgs e)
+    {
+        if (Guid.TryParse(e.Value?.ToString(), out Guid selectedId))
+        {
+            var selectedEmployee = employees.FirstOrDefault(e => e.Id == selectedId);
+            if (selectedEmployee != null)
+            {
+                newSaleCar.Employees = new List<Employee> { selectedEmployee };
+            }
+        }
+    }
+
+    private async Task CarSelectionChanged(ChangeEventArgs e)
+    {
+        if (Guid.TryParse(e.Value?.ToString(), out Guid selectedId))
+        {
+            var selectedCar = cars.FirstOrDefault(e => e.Id == selectedId);
+            if (car != null)
+            {
+                newSaleCar.Cars = new List<Car> { selectedCar };
+                car = selectedCar;
+            }
+        }
+    }
+
+    private async Task AddSale()
+    {
+        car.Status = "Saled";
+        var response = await Http.PutAsJsonAsync($"https://localhost:7225/api/Car/{car.Id}", car);
+                newDDS.Cars.Add(car);
+                newDDS.Date = DateTime.Today;
+                newDDS.Type = "sale car";
+                newDDS.IsProfit = true;
+                newDDS.Note = "";
+
+                var responseDDS = await Http.PostAsJsonAsync("https://localhost:7225/api/DDS", newDDS);
+                if (responseDDS.IsSuccessStatusCode)
+                {
+                    var AddDDS = await responseDDS.Content.ReadFromJsonAsync<DDS>();
+                    if (AddDDS != null)
+                    {
+                        newSaleCar.BuyRow.Add(AddDDS);
+
+                        await Http.PostAsJsonAsync("https://localhost:7225/api/SaleCar", newSaleCar);
+                    }
+                    else
+                    {
+                        var error = await response.Content.ReadFromJsonAsync<Error>();
+                        if (error != null) message = error.Details;
+                    }
+                }
+                else
+                {
+                    var error = await response.Content.ReadFromJsonAsync<Error>();
+                    if (error != null) message = error.Details;
+                }
+    }
+
+    class Error
+    {
+        public string Details { get; set; } = "";
+    }
+}

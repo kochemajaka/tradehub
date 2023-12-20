@@ -1,0 +1,41 @@
+@using System.Net.Http
+@inject HttpClient Http
+@using System.Net.Http.Json
+@using System.Threading.Tasks
+@using tradehub.Domain.Model
+@using Microsoft.AspNetCore.Components.Forms
+@page "/form"
+
+
+<div>
+    <h3>Выберите тип формы:</h3>
+    <select @bind="selectedFormType" >
+        <option value="BuyCarForm">Покупка автомобиля</option>
+        <option value="EmployeeForm">Добавление сотрудника</option>
+        <option value="SaleForm">Продажа автомобиля</option>
+        <option value="DDSForm">Денежные операции</option>
+
+    </select>
+
+    @if (selectedFormType == "BuyCarForm")
+    {
+        <BuyCarForm />
+    }
+    else if (selectedFormType == "EmployeeForm")
+    {
+        <EmployeeForm />
+    }
+    else if (selectedFormType == "SaleForm")
+    {
+        <SaleCarForm />
+    }
+    else if (selectedFormType == "DDSForm")
+    {
+        <DDSForm />
+    }
+
+</div>
+
+@code {
+    private string selectedFormType = "BuyCarForm"; 
+}

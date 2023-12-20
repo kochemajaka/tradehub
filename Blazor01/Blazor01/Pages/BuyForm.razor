@@ -1,0 +1,47 @@
+@using System.Net.Http
+@inject HttpClient Http
+@using System.Net.Http.Json
+@using System.Threading.Tasks
+@using tradehub.Domain.Model
+
+@page "/addcar"
+
+<h3>Add Buy Car</h3>
+
+@if (isSubmitted)
+{
+    <p>Buy Car added successfully!</p>
+}
+else
+{
+    <form @onsubmit="SubmitForm">
+        <div>
+            <label>Name:</label>
+            <InputText @bind-Value="buyCar.BuyedOn" />
+        </div>
+        <div>
+            <label>VIN:</label>
+            <InputText @bind-Value="buyCar.BuyedOn" />
+        </div>
+        <div>
+            <label>Status:</label>
+            <InputText @bind-Value="buyCar.BuyedOn" />
+        </div>
+        <button type="submit">Add Buy Car</button>
+    </form>
+}
+
+@code {
+    private BuyCar buyCar = new BuyCar();
+    private bool isSubmitted = false;
+
+    private async Task SubmitForm()
+    {
+        // Отправляем данные на сервер
+        await Http.PostAsJsonAsync("api/BuyCar", buyCar);
+
+        // Очищаем поля и отмечаем, что форма была отправлена успешно
+        buyCar = new BuyCar();
+        isSubmitted = true;
+    }
+}

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34221.43
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor01", "Blazor01\Blazor01.csproj", "{F18A9F8D-0A67-48A5-926A-05572A9B7DDC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tradehub.Domain", "..\tradehub\tradehub.Domain\tradehub.Domain.csproj", "{B9F4ECB0-92FB-4305-AD50-F59DD5D227BD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F18A9F8D-0A67-48A5-926A-05572A9B7DDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F18A9F8D-0A67-48A5-926A-05572A9B7DDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F18A9F8D-0A67-48A5-926A-05572A9B7DDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F18A9F8D-0A67-48A5-926A-05572A9B7DDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9F4ECB0-92FB-4305-AD50-F59DD5D227BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9F4ECB0-92FB-4305-AD50-F59DD5D227BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9F4ECB0-92FB-4305-AD50-F59DD5D227BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9F4ECB0-92FB-4305-AD50-F59DD5D227BD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A796341A-E0FD-44A9-BD36-8CDC2FA07C47}
+	EndGlobalSection
+EndGlobal
